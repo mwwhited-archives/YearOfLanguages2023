@@ -1,0 +1,1 @@
+the code in this folder was generated from openai chatgpt/playground.  there might be a few tweaks for debugging but its mostly straight out of the openai service
