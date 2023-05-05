@@ -9,7 +9,6 @@
         public double Diameter { get; init; }
         public StarColors Color { get; init; }
 
-
         protected uint Seed { get; init; }
         protected Lehmer32 Rand { get; init; }
 
@@ -17,13 +16,13 @@
         {
             X = x;
             Y = y;
-            Seed = (uint)(X & 0xffff) | ((uint)(Y & 0xffff) << 16);
+            Seed = (uint)( (X & 0xffff) | ((Y & 0xffff) << 16));
             Rand = new Lehmer32(Seed);
             Exists = Rand.Next(20) == 1;
             if (!Exists) return;
 
             // Generate Star
-            Diameter = Rand.Next(10.0, 40.0);
+            Diameter = Rand.Next(10.0, 32.0);
             Color = Rand.Next<StarColors>();
         }
     }
