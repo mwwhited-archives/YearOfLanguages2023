@@ -13,19 +13,39 @@ internal class Program
 
         var inputs = new[]
         {
-          new {inputs=  new []{ 0.0, 0.0}, expected = new [] {0.0,0.0,0.0 } },
-          new {inputs=  new []{ 0.0, 1.0}, expected = new [] {0.0,1.0,1.0 } },
-          new {inputs=  new []{ 1.0, 0.0}, expected = new [] {0.0,1.0,1.0 } },
-          new {inputs=  new []{ 1.0, 1.0}, expected = new [] {1.0,1.0,0.0 } },
+          new { inputs = new [] { 0.0, 0.0 }, expected = new [] { 0.0, 0.0, 0.0 } },
+          new { inputs = new [] { 0.0, 1.0 }, expected = new [] { 0.0, 1.0, 1.0 } },
+          new { inputs = new [] { 1.0, 0.0 }, expected = new [] { 0.0, 1.0, 1.0 } },
+          new { inputs = new [] { 1.0, 1.0 }, expected = new [] { 1.0, 1.0, 0.0 } },
         };
 
         var results = inputs
             //.Select(i => nn.Train(i.inputs.Select(x => -2 * x - 1).ToArray(), i.expected.Select(x => -2 * x - 1).ToArray()))
             .Select(i => nn.Train(i.inputs, i.expected))
             .ToArray();
-        var losses = Enumerable.Range(0, nn.Outputs)
-            .Select(i => results.Sum(r => r.losses.ElementAt(i)))
-            .ToArray();
+
+
+        var newWeights = results.Reverse();
+
+
+
+        // output
+        /*
+           da/dz = sech(weighted sum)
+           dC/da = 2*(out - expected)
+           dz/db = 1
+           dC/db = (dC/da) * (da/dz) * (dz/db)
+           dC/dw = (dC/da) * (da/dz) * (input {unweighted})
+         */
+
+        /*
+        Cost Function => =LAMBDA(y{expected},a{actual},POWER(a-y,2))
+         */
+
+
+        //var losses = Enumerable.Range(0, nn.Outputs)
+        //    .Select(i => results.Sum(r => r.losses.ElementAt(i)))
+        //    .ToArray();
 
         // output = 
         /*
@@ -106,9 +126,9 @@ public class NeuralNetwork
         }
 
         return (
-            current, 
-            temp.ToArray(), 
-            expected, 
+            current,
+            temp.ToArray(),
+            expected,
             expected.Zip(current).Select(i => 2 * Math.Pow(i.First - i.Second, 2)).ToArray()
             );
     }
