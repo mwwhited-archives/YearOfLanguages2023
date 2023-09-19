@@ -1,0 +1,34 @@
+Person
+     Prefix : string?
+//     First Name : name?
+//     Last Name : name,
+//     Suffix : string?
+//     
+//     Email Address : email
+//     Email Address Verified : verify
+//     Logins : AuthenticationReference[+] 
+// 
+//     @expose : authenticated
+//     @authorize :           
+//         @read : [authenticated]
+//         @write: [self, admin, system]
+// 
+// AuthenticationReference
+//     _code : {ProviderName}$${ObjectId}
+// 
+//     ProviderName : string <<code>>
+//     ObjectId : string <<code>>
+//     AuthenticationVerified : verify
+// 
+// email : string
+//      // https://www.rfc-editor.org/rfc/rfc5322 ??
+//      
+// verify : bool
+//     @authorize :
+//         true : [system, admin]
+//         false : [self, admin, system]
+// 
+// name : string
+//     @validation:
+//         regex: [^\s] //no whitespace
+//         

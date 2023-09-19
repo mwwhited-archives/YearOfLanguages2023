@@ -1,0 +1,19 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [        
+        {
+            "name": "Debug ANTLR4 grammar",
+            "type": "antlr-debug",
+            "request": "launch",
+            "input": "example.matter",
+            "grammar": "Matter.g4",
+            "actionFile": "ExampleActions.js",
+            "startRule": "models",
+            "printParseTree": true,
+            "visualParseTree": true
+        }
+    ]
+}
