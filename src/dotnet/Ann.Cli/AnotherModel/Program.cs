@@ -8,6 +8,7 @@ internal class Program
 {
     static void Main(string[] args)
     {
+        // https://www.3blue1brown.com/lessons/backpropagation
         var nn = new NeuralNetwork(2, new[] { 4, }, 3, new Random(0));
 
         var inputs = new[]
@@ -19,12 +20,34 @@ internal class Program
         };
 
         var results = inputs
+            //.Select(i => nn.Train(i.inputs.Select(x => -2 * x - 1).ToArray(), i.expected.Select(x => -2 * x - 1).ToArray()))
             .Select(i => nn.Train(i.inputs, i.expected))
             .ToArray();
         var losses = Enumerable.Range(0, nn.Outputs)
             .Select(i => results.Sum(r => r.losses.ElementAt(i)))
             .ToArray();
-        
+
+        // output = 
+        /*
+         * -> inputs[..] -> layer[..] -> output[..] 
+         * 
+         * map(inputs -> layerIndex -> 
+         * tanh(
+         *  sum(inputIndex=>input[inputIndex] * weight[inputIndex]+ bias)
+         *  )
+         *  ) -> [layerIndex]
+         *  
+         * map(inputs -> layerIndex -> 
+         * tanh(
+         *  sum(inputIndex=>input[inputIndex] * weight[inputIndex]+ bias)
+         *  )
+         *  ) -> [layerIndex]
+         *  
+         *  https://www.3blue1brown.com/lessons/backpropagation
+         *  https://www.3blue1brown.com/lessons/backpropagation-calculus
+         *  
+         */
+
         //var losses = new List<double>();
         //foreach (var input in inputs)
         //{
