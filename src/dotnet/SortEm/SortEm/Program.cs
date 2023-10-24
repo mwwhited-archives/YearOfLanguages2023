@@ -1,7 +1,4 @@
-﻿using System.Globalization;
-using System;
-
-namespace SortEm
+﻿namespace SortEm
 {
     internal class Program
     {
@@ -22,9 +19,9 @@ namespace SortEm
             var baseTarget = @"M:\media\Photos\";
             var sources = new[]
             {
-                @"C:\Users\mwwhi\Pictures\iCloud Photos\Photos",
+                @"M:\ICloud",
             };
-
+            var errors = new List<Exception>();
             foreach (var source in sources)
             {
                 var baseSource = source;
@@ -45,25 +42,28 @@ namespace SortEm
                     var modified = info.LastWriteTime;
 
                     var baseName = file.Replace(baseSource, "");
-                    var newPath = Path.Combine(baseTarget, modified.Year.ToString(), $"{modified:yyyyMM}_iPhone", baseName);
+                    var newPath = Path.GetFullPath(Path.Combine(baseTarget, modified.Year.ToString(), $"{modified:yyyyMM}_iPhone", baseName));
 
-                    var dir = Path.GetDirectoryName(newPath);
-                    if (!Directory.Exists(dir))
-                    {
-                        Directory.CreateDirectory(dir);
-                        writer.WriteLine($"(create) {nameof(dir)} = {dir}");
-                    }
-
-                    if (File.Exists(newPath))
-                    {
-                        writer.WriteLine($"(skip) {baseName} => {newPath}");
-                        continue;
-                    }
-
-                    Console.WriteLine($"{baseName} => {newPath}");
                     try
                     {
-                       // throw new Exception("Test");
+                        if (!newPath.StartsWith(baseTarget, StringComparison.InvariantCultureIgnoreCase))
+                            throw new ApplicationException("Output file not in target");
+
+                        var dir = Path.GetDirectoryName(newPath);
+                        if (!Directory.Exists(dir))
+                        {
+                            Directory.CreateDirectory(dir);
+                            writer.WriteLine($"(create) {nameof(dir)} = {dir}");
+                        }
+
+                        if (File.Exists(newPath))
+                        {
+                            writer.WriteLine($"(skip) {baseName} => {newPath}");
+                            continue;
+                        }
+
+                        Console.WriteLine($"{baseName} => {newPath}");
+                         throw new Exception("Test");
                         info.MoveTo(newPath);
                         writer.WriteLine($"(moved) {baseName} => {newPath}");
                     }
@@ -71,11 +71,13 @@ namespace SortEm
                     {
                         Console.Error.WriteLine($"(error) {baseName} => {newPath} \"{ex.Message}\"");
                         writer.WriteLine($"(error) {baseName} => {newPath} \"{ex.Message}\"");
+                        errors.Add(ex);
                     }
-
                 }
-
             }
+
+            if (errors.Count > 0)
+                throw new AggregateException(errors);
         }
     }
 }
