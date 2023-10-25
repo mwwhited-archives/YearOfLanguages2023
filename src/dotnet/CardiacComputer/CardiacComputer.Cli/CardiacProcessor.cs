@@ -6,31 +6,17 @@ public class CardiacProcessor
 {
     public CardiacProcessor(
         params (int index, Instructions instruction, int operand)[] instructions
+        ) : this(instructions.AsEnumerable())
+    {
+    }
+    public CardiacProcessor(
+        IEnumerable<(int index, Instructions instruction, int operand)> instructions
         ) : this(Enumerable.Range(0, 100).Select(idx => (instructions.FirstOrDefault(i => i.index == idx) switch
         {
             (int, Instructions, int) v => (v.instruction, v.operand)
         })))
     {
     }
-    //public CardiacProcessor(
-    //    params (int index, int instruction)[] instructions
-    //    ) : this(Enumerable.Range(0, 100).Select(idx => (instructions.FirstOrDefault(i => i.index == idx) switch
-    //    {
-    //        (int index, int instr) v => v.instruction
-    //    })))
-    //{
-    //}
-
-    //public CardiacProcessor(
-    //    params (Instructions instruction, int address)[] instructions
-    //    ) : this(instructions.AsEnumerable())
-    //{
-    //}
-    //public CardiacProcessor(
-    //    params int[] instructions
-    //    ) : this(instructions.AsEnumerable())
-    //{
-    //}
     public CardiacProcessor(
         IEnumerable<(Instructions instruction, int address)> instructions
         ) : this(instructions.Select(item => (
@@ -39,7 +25,7 @@ public class CardiacProcessor
             ))
     {
     }
-    private CardiacProcessor(
+    public CardiacProcessor(
         IEnumerable<int> instructions
         )
     {
@@ -52,7 +38,6 @@ public class CardiacProcessor
     }
 
     private readonly int[] _memory = new int[100];
-    //private readonly int[] _program;
     private int _programCounter = 0;
     private int _accumulator = 0;
 
@@ -60,6 +45,11 @@ public class CardiacProcessor
     public int ProgramCounter => _programCounter;
     public int Accumulator => _accumulator;
 
+    public int this[int addr]
+    {
+        get => getFrom(addr);
+        set => storeTo(value, addr);
+    }
 
     public static IEnumerable<int> getInputs()
     {
@@ -71,37 +61,40 @@ public class CardiacProcessor
             yield return value;
         }
     }
+    private int getInput(IEnumerator<int> input)
+    {
+        if (!input.MoveNext()) return -99999;
+        var current = input.Current;
+        return current;
+    }
+
+    private void storeTo(int input, int addr)
+    {
+        while (input < -999) input += 1000;
+        while (input > 999) input -= 1000;
+        _memory[addr] = input;
+        //Console.WriteLine($"#{addr}={input}");
+    }
+
+    private int getFrom(int addr) => _memory[addr % _memory.Length];
+
+    private (Instructions instruction, int address, int raw) getInstruction() => _memory[_programCounter % _memory.Length] switch
+    {
+        int instr => ((Instructions)(instr / 100), instr % 100, instr)
+    };
+
     public IEnumerable<int> Execute() => Execute(getInputs());
 
     public IEnumerable<int> Execute(IEnumerable<int> inputs)
     {
-        _programCounter = 0; // _memory.Length - 1;
+        _programCounter = 0;
         _accumulator = 0;
-
         var input = inputs.GetEnumerator();
+        return Execute(input);
+    }
 
-        int getInput()
-        {
-            if (!input.MoveNext()) return -99999;
-            var current = input.Current;
-            return current;
-        }
-
-        void storeTo(int input, int addr)
-        {
-            while (input < -999) input += 1000;
-            while (input > 999) input -= 1000;
-            _memory[addr] = input;
-            //Console.WriteLine($"#{addr}={input}");
-        }
-
-        int getMemory(int addr) => _memory[addr % _memory.Length];
-
-        (Instructions instruction, int address, int raw) getInstruction() => _memory[_programCounter % _memory.Length] switch
-        {
-            int instr => ((Instructions)(instr / 100), instr % 100, instr)
-        };
-
+    public IEnumerable<int> Execute(IEnumerator<int> input)
+    {
         while (true)
         {
             //TODO: maybe these should be an error instead
@@ -120,19 +113,19 @@ public class CardiacProcessor
                 // The INP instruction reads a single card from the input and stores the contents of that card into the memory location identified by the operand address.
                 // (MEM[a] ← INPUT)
                 case Instructions.INP:
-                    storeTo(getInput(), address);
+                    storeTo(getInput(input), address);
                     break;
 
                 // This instruction causes the contents of the memory location specified by the operand address to be loaded into the accumulator.
                 // (ACC ← MEM[a])
                 case Instructions.CLA:
-                    _accumulator = getMemory(address);
+                    _accumulator = getFrom(address);
                     break;
 
                 // The ADD instruction takes the contents of the accumulator, adds it to the contents of the memory location identified by the operand address and stores the sum into the accumulator.
                 // (ACC ← ACC + MEM[a])
                 case Instructions.ADD:
-                    _accumulator += getMemory(address);
+                    _accumulator += getFrom(address);
                     break;
 
                 //The TAC instruction is the CARDIAC's only conditional branch instruction. It tests the accumulator, and if the accumulator is negative, then the PC is loaded with the operand address. Otherwise, the PC is not modified and the program continues with the instruction following the TAC.
@@ -151,7 +144,7 @@ public class CardiacProcessor
                 // The OUT instruction takes the contents of the memory location specified by the operand address and writes them out to an output card.
                 // (OUTPUT ← MEM[a])
                 case Instructions.OUT:
-                    yield return getMemory(address);
+                    yield return getFrom(address);
                     break;
 
                 // This is the inverse of the CLA instruction. The accumulator is copied to the memory location given by the operand address.
@@ -163,7 +156,7 @@ public class CardiacProcessor
                 // In the SUB instruction the contents of the memory location identified by the operand address is subtracted from the contents of the accumulator and the difference is stored in the accumulator.
                 // (ACC ← ACC − MEM[a])
                 case Instructions.SUB:
-                    _accumulator -= getMemory(address);
+                    _accumulator -= getFrom(address);
                     break;
 
                 // The JMP instruction first copies the PC into the operand part of the instruction at address 99. So if the CARDIAC is executing a JMP instruction stored in memory location 42, then the value 843 will be stored in location 99. Then the operand address is copied into the PC, causing the next instruction to be executed to be the one at the operand address.
