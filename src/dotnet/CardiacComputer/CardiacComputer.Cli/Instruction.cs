@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace CardiacComputer.Cli;
+﻿namespace CardiacComputer.Cli;
 
 public record Instruction(Opcodes Opcode, int Operand)
 {

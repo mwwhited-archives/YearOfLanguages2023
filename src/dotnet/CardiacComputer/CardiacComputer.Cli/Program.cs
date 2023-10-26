@@ -8,11 +8,15 @@ internal class Program
     {
         // https://www.cs.drexel.edu/~bls96/museum/cardiac.html
 
-        var processor = CountNumbersWithLoop();
+        var processor = CountNumbersWithEnding();
 
         foreach (var result in processor.Execute())
+        {
+            Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine($"Out: \t{result}");
+        }
 
+        Console.ForegroundColor = ConsoleColor.DarkGreen;
         Console.WriteLine("fin!");
         Console.WriteLine(processor);
     }
@@ -57,11 +61,34 @@ internal class Program
     public static CardiacProcessor CountNumbersWithLoop() => new CardiacProcessor(
         20,
         (CLA, 01), //set accumulator to value in 1
-                   
+
         (STO, 03), // store accumulator to 3
         (OUT, 03), // output value in 3
         (ADD, 01), // increment 
-                   
+
         (JMP, 21)  // halt and reset
     ).Set(1, 1);   // set data value 1 to 1
+
+    public static CardiacProcessor CountNumbersWithEnding() => new CardiacProcessor(
+        20,
+        (CLA, 19), // set accumulator to value from 19
+        (STO, 18), // store value to 18 
+
+        (CLA, 18), // set accumulator to value from 19
+        (ADD, 01), // add value from 1
+        (STO, 18), // store value to 18 
+
+        (CLA, 17), // set accumulator to value from 19
+        (ADD, 01), // add value from 1
+        (STO, 17), // store value to 18 
+        (OUT, 17), // output value in 18
+
+        (CLA, 18), // set accumulator to value from 19
+        (TAC, 21), // if accumulator is < 0 then jump
+        (HRS, 0)   // halt and reset
+    )
+    .Set(1, 1) // seed data 1 as 1
+    .Set(17, 0) // seed data 17 as 0
+    .Set(19, -4) // see data 19 as -4
+    ;
 }

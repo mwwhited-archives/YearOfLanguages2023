@@ -53,6 +53,7 @@ public class CardiacProcessor
     {
         while (true)
         {
+            Console.ForegroundColor = ConsoleColor.Blue;
             Console.Write("Enter a number? ");
             int value;
             while (!int.TryParse(Console.ReadLine(), out value)) ;
@@ -102,6 +103,7 @@ public class CardiacProcessor
 
             var (instruction, address, instructionRegister) = getInstruction();
 
+            Console.ForegroundColor = ConsoleColor.DarkGray;
             Console.WriteLine($"{_programCounter:00}@{instructionRegister:000}:{(instruction, address)}");
 
             _programCounter++;
