@@ -8,7 +8,7 @@ internal class Program
     {
         // https://www.cs.drexel.edu/~bls96/museum/cardiac.html
 
-        var processor = CountNumbersTo();
+        var processor = Multiply();
 
         foreach (var result in processor.Execute())
         {
@@ -110,9 +110,13 @@ internal class Program
     ;
 
     const int _inc = 1;
-    const int _zero = 2;
-    const int _counter = 3;
-    const int _result = 4;
+    const int _zero = _inc + 1;
+    const int _counter = _zero + 1;
+    const int _result = _counter + 1;
+
+    const int _a = _result + 1;
+    const int _b = _a + 1;
+    const int _temp = _b + 1;
 
     public static CardiacProcessor CountNumbersTo() => new CardiacProcessor(
         20,
@@ -134,6 +138,52 @@ internal class Program
         /* 31 */(HRS, 0)   // halt and reset
     )
     .Set(_inc, 1) // seed data 1 as 1
+    .Set(_zero, 0) // seed data 2 as 0
+    ;
+
+
+    public static CardiacProcessor Multiply() => new CardiacProcessor(
+        20,
+
+        //read inputs 
+        (INP, _a),          // 20: read A
+        (INP, _b),          // 21: read B
+
+        // if a < b then swap a and b
+        (CLA, _b),          // 22: set accumulator b
+        (SUB, _a),          // 23: subtract a 
+        (TACoF, 6),         // 24: if a < b then swap
+        (CLA, _a),          // 25: set accumulator to a
+        (STO, _temp),       // 26: store a to temp
+        (CLA, _b),          // 27: load b
+        (STO, _a),          // 28: store b to a
+        (CLA, _temp),       // 29: load temp
+        (STO, _b),          // 30: store temp to b
+
+        // clear result
+        (CLA, _zero),       // 31: set accumulator 0
+        (STO, _result),     // 32: set result to 0
+
+        // setup counter
+        (SUB, _b),          // 33: negate counter                          
+        (STO, _counter),    // 34: store counter 
+
+        // multiple a * b
+        (CLA, _result),     // 35: set accumulator to value from 4
+        (ADD, _a),          // 36: add value from 1
+        (STO, _result),     // 37: store value to 4 
+        (CLA, _counter),    // 38: set accumulator to value from 4
+        (ADD, _inc),        // 39: add value from 1
+        (STO, _counter),    // 40: store value to 4 
+        (TACoB, 7),         // 41: if accumulator is < 0 then loop back
+
+        // output result
+        (OUT, _result),     // 42: output value in 4
+
+        // end
+        (HRS, 0)            // 43: halt and reset
+    )
+    .Set(_inc, 1)  // seed data 1 as 1
     .Set(_zero, 0) // seed data 2 as 0
     ;
 }

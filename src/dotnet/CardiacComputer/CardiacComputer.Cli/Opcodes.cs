@@ -44,7 +44,6 @@ public enum Opcodes
     /// </summary>
     HRS = 9,
 
-
     /// <summary>
     /// Test accumulator and jump back offset if negative
     /// </summary>
