@@ -11,9 +11,8 @@ public class CardiacProcessor
 
     public CardiacProcessor(
         int offset,
-        Instruction instruction,
         params Instruction[] instructions
-        ) : this(offset, new[] { instruction }.Concat(instructions))
+        ) : this(offset, instructions.AsEnumerable())
     {
     }
     public CardiacProcessor(
@@ -21,47 +20,20 @@ public class CardiacProcessor
         IEnumerable<Instruction> instructions
         )
     {
-        var program = instructions.Select(instr=>(int)instr).ToArray();
-        if (program.Length + offset > _memory.Length)
+        Set(offset, instructions.Select(instr => (int)instr).ToArray());
+        if (offset > 0)
+            this[0] = (Instruction)(JMP, offset);
+    }
+
+    public CardiacProcessor Set(int offset, params int[] values)
+    {
+        if (values.Length + offset > _memory.Length)
             throw new ApplicationException("out of memory");
-        Array.Copy(program, 0, _memory, offset, program.Length);
-        _memory[0] = new Instruction(JMP, offset);
+        Array.Copy(values, 0, _memory, offset, values.Length);
+
+        return this;
     }
 
-    public CardiacProcessor(
-        params (int index, Opcodes instruction, int operand)[] instructions
-        ) : this(instructions.AsEnumerable())
-    {
-    }
-    public CardiacProcessor(
-        IEnumerable<(int index, Opcodes instruction, int operand)> instructions
-        ) : this(Enumerable.Range(0, MemMax).Select(idx => (instructions.FirstOrDefault(i => i.index == idx) switch
-        {
-            (int, Opcodes, int) v => (v.instruction, v.operand)
-        })))
-    {
-    }
-
-    public CardiacProcessor(
-        IEnumerable<(Opcodes instruction, int address)> instructions
-        ) : this(instructions.Select(item => (
-            (int)item.instruction) * MemMax +
-            ((item.address >= 0 && item.address < MemMax) ? item.address : throw new ApplicationException("Invalid instruction address(s) detected"))
-            ))
-    {
-    }
-
-    public CardiacProcessor(
-        IEnumerable<int> instructions
-        )
-    {
-        if (instructions.Any(instruction => instruction < 0 || instruction > 999))
-            throw new ApplicationException("Invalid instruction(s) detected");
-
-        var program = instructions.ToArray();
-        Array.Copy(program, _memory, Math.Min(program.Length, _memory.Length));
-        //_memory[0] = 001;
-    }
 
     private readonly int[] _memory = new int[MemMax];
     private int _programCounter = 0;

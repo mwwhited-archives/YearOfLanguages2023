@@ -1,5 +1,4 @@
-﻿using System.Net;
-using static CardiacComputer.Cli.Opcodes;
+﻿using static CardiacComputer.Cli.Opcodes;
 
 namespace CardiacComputer.Cli;
 
@@ -9,11 +8,7 @@ internal class Program
     {
         // https://www.cs.drexel.edu/~bls96/museum/cardiac.html
 
-        var processor = AddNumbers();
-
-        // var processor = new CardiacProcessor(CountNumbersWithLoop());
-
-        //processor[0] = 817;
+        var processor = CountNumbersWithLoop();
 
         foreach (var result in processor.Execute())
             Console.WriteLine($"Out: \t{result}");
@@ -24,50 +19,49 @@ internal class Program
 
     public static CardiacProcessor AddNumbers() => new(
         17,
-        (INP, 34),
-        (INP, 35),
-        (CLA, 34),
-        (ADD, 35),
-        (STO, 36),
-        (OUT, 36),
-        (HRS, 0)
+        (INP, 34), // get input a
+        (INP, 35), // get input b
+        (CLA, 34), // set accumulator to a
+        (ADD, 35), // add b to accumulator
+        (STO, 36), // store to s
+        (OUT, 36), // output s
+        (HRS, 0)   // halt and reset
     );
 
+    public static CardiacProcessor CountNumbers() => new CardiacProcessor(
+        20, //set entry point offset
+        (CLA, 01), //set accumulator to value in 1
 
-    public static IEnumerable<(int addr, Opcodes opcode, int operand)> CountNumbers() => new[]
-    {
-        (00, JMP, 20), // Jump to beginning
+        (STO, 03), // store accumulator to 3
+        (OUT, 03), // output value in 3
+        (ADD, 01), // increment 
 
-        (01, default, 1), // store 1 // TODO: there is no direct store
+        (STO, 03), // store accumulator to 3
+        (OUT, 03), // output value in 3
+        (ADD, 01), // increment 
 
-        (20, CLA, 01), // set counter to 0
-        (21, STO, 03), // store counter
-        (22, OUT, 03), // output counter
-        (23, ADD, 01), // add 1 //add increment function
-        (24, STO, 03), // store counter
-        (25, OUT, 03), // output counter
-        (26, ADD, 01), // add 1 //add increment function
-        (27, STO, 03), // store counter
-        (28, OUT, 03), // output counter
-        (29, ADD, 01), // add 1 //add increment function
-        (30, STO, 03), // store counter
-        (31, OUT, 03), // output counter
-        (32, ADD, 01), // add 1 //add increment function
-        (33, STO, 03), // store counter
-        (34, OUT, 03), // output counter
-        (35, HRS, 20),  // Halt and Reset
-    };
+        (STO, 03), // store accumulator to 3
+        (OUT, 03), // output value in 3
+        (ADD, 01), // increment 
 
-    public static IEnumerable<(int addr, Opcodes opcode, int operand)> CountNumbersWithLoop() => new[]
-    {
-        (00, JMP, 21), // Jump to beginning
+        (STO, 03), // store accumulator to 3
+        (OUT, 03), // output value in 3
+        (ADD, 01), // increment 
 
-        (01, default, 1), // store 1 // TODO: there is no direct store
+        (STO, 03), // store accumulator to 3
+        (OUT, 03), // output value in 3
 
-        (21, CLA, 01), // set counter to 0
-        (22, STO, 03), // store counter
-        (23, OUT, 03), // output counter
-        (24, ADD, 01), // add 1 //add increment function
-        (25, JMP, 22), // store counter
-    };
+        (HRS, 0)   // halt and reset
+    ).Set(1, 1);   // set data value 1 to 1
+
+    public static CardiacProcessor CountNumbersWithLoop() => new CardiacProcessor(
+        20,
+        (CLA, 01), //set accumulator to value in 1
+                   
+        (STO, 03), // store accumulator to 3
+        (OUT, 03), // output value in 3
+        (ADD, 01), // increment 
+                   
+        (JMP, 21)  // halt and reset
+    ).Set(1, 1);   // set data value 1 to 1
 }
