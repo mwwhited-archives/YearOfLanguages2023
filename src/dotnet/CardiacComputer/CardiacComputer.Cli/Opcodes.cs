@@ -1,6 +1,6 @@
 ﻿namespace CardiacComputer.Cli;
 
-public enum Instructions
+public enum Opcodes
 {
     /// <summary>
     /// Read a card into memory
