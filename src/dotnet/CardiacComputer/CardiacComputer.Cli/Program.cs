@@ -8,12 +8,25 @@ internal class Program
     {
         // https://www.cs.drexel.edu/~bls96/museum/cardiac.html
 
-        var processor = Multiply();
+        var processor = AddNumbers();
 
-        foreach (var result in processor.Execute())
+        //foreach (var result in processor.Execute())
+        //{
+        //    Console.ForegroundColor = ConsoleColor.White;
+        //    Console.Write($"{result} ");
+        //}
+
+        while (true)
         {
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine($"Out: \t{result}");
+            foreach (var result in processor.Resume())
+            {
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write($"{result} ");
+            }
+
+            Console.WriteLine("again?");
+            var ret = Console.ReadLine();
+            if (ret == "") break;
         }
 
         Console.ForegroundColor = ConsoleColor.DarkGreen;
@@ -23,12 +36,12 @@ internal class Program
 
     public static CardiacProcessor AddNumbers() => new(
         17,
-        (INP, 34), // get input a
-        (INP, 35), // get input b
-        (CLA, 34), // set accumulator to a
-        (ADD, 35), // add b to accumulator
-        (STO, 36), // store to s
-        (OUT, 36), // output s
+        (INP, _a), // get input a
+        (INP, _b), // get input b
+        (CLA, _a), // set accumulator to a
+        (ADD, _b), // add b to accumulator
+        (STO, _result), // store to s
+        (OUT, _result), // output s
         (HRS, 0)   // halt and reset
     );
 
@@ -117,6 +130,8 @@ internal class Program
     const int _a = _result + 1;
     const int _b = _a + 1;
     const int _temp = _b + 1;
+    const int _c = _temp + 1;
+    const int _d = _c + 1;
 
     public static CardiacProcessor CountNumbersTo() => new CardiacProcessor(
         20,
@@ -180,8 +195,33 @@ internal class Program
         // output result
         (OUT, _result),     // 42: output value in 4
 
+        //(CLA, _result),
+        //(SFT, 10),     // shift left
+        //(STO, _c),    // store to c
+        //(SFT, 02),     // shift right
+        //(STO, _d),    // store to d
+        //(OUT, _c),     // 42: output c
+        //(OUT, _d),     // 42: output d
+
         // end
         (HRS, 0)            // 43: halt and reset
+    )
+    .Set(_inc, 1)  // seed data 1 as 1
+    .Set(_zero, 0) // seed data 2 as 0
+    ;
+
+
+    public static CardiacProcessor MultiplySimple() => new CardiacProcessor(
+        20,
+
+        //read inputs 
+        (INP, _a),          // 20: read A
+        (CLA, _a),       // 29: load temp
+        (INP, _a),          // 20: read A
+        (MUL, _a),          // 21: read B
+        (STO, _result),     // 32: set result to 0
+        (OUT, _result),     // 42: output value in 4
+        (HRS, 00)            // 43: halt and reset
     )
     .Set(_inc, 1)  // seed data 1 as 1
     .Set(_zero, 0) // seed data 2 as 0
