@@ -18,6 +18,7 @@ public enum Opcodes
     /// Test accumulator and jump if negative
     /// </summary>
     TAC = 3,
+
     /// <summary>
     /// Shift accumulator
     /// </summary>
@@ -42,4 +43,15 @@ public enum Opcodes
     /// Halt and reset
     /// </summary>
     HRS = 9,
+
+
+    /// <summary>
+    /// Test accumulator and jump back offset if negative
+    /// </summary>
+    TACoB = 10,
+
+    /// <summary>
+    /// Test accumulator and jump forward offset if negative
+    /// </summary>
+    TACoF = 11,
 }
