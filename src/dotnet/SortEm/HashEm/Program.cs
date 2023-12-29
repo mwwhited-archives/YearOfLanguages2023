@@ -1,9 +1,7 @@
-﻿using HashEm.Persistence;
-using Microsoft.EntityFrameworkCore;
+﻿using HashEm.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
 
 namespace HashEm;
 
@@ -27,12 +25,9 @@ internal class Program
             })
             .ConfigureServices((context, services) =>
             {
-                services.AddDbContext<HashDbContext>(options =>
-                {
-                });
+                services.AddSingleton<HashingDbContext>();
 
                 services.Configure<HashingOptions>(options => context.Configuration.Bind(nameof(HashingOptions), options));
-
                 services.AddHostedService<HashingService>();
 
                 //services.TryAddSystemExtensions(context.Configuration);
