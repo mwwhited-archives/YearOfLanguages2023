@@ -1,19 +1,21 @@
 ﻿using HashEm.Persistence;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
 namespace HashEm;
 
 public class HashingService(
-    HashDbContext db
+    HashDbContext db,
+    IOptions<HashingOptions> options
     ) : IHostedService
 {
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var config = options.Value;
+
+        return Task.CompletedTask;
     }
 
-    public Task StopAsync(CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
+    public Task StopAsync(CancellationToken cancellationToken) =>
+         Task.CompletedTask;
 }

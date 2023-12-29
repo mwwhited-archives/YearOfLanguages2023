@@ -14,9 +14,7 @@ internal class Program
     //    // Server=(LocalDB)\MSSQLLocalDB;Integrated Security=true;AttachDbFileName=D:\Data\MyDB1.mdf
 
     //    // https://learn.microsoft.com/en-us/ef/core/get-started/overview/first-app?tabs=netcore-cli
-
-    //    var searchRoot = @"E:\";
-    //    var metadata = Path.Combine(searchRoot, "metadata");
+    // https://tomaskohl.com/code/2020-04-07/trying-out-litedb/
 
     static async Task Main(string[] args) =>
         await Host.CreateDefaultBuilder(args)
@@ -31,11 +29,9 @@ internal class Program
             {
                 services.AddDbContext<HashDbContext>(options =>
                 {
-                    options.UseSqlite(context.Configuration.GetConnectionString("DefaultConnection"));
                 });
 
-                //services.AddConfiguration<TemplateEngineSettings>(context.Configuration);
-                //services.AddConfiguration<FileTemplatingSettings>(context.Configuration);
+                services.Configure<HashingOptions>(options => context.Configuration.Bind(nameof(HashingOptions), options));
 
                 services.AddHostedService<HashingService>();
 
