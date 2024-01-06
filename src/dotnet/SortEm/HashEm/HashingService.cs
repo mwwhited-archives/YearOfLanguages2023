@@ -43,31 +43,39 @@ public class HashingService(
                         RealativePath = realativePath,
                     };
 
-        await Parallel.ForEachAsync(files, cancellationToken, async (file, token) =>
-        {
-            if (token.IsCancellationRequested)
-            {
-                log.LogWarning("Canceled!");
-                return;
-            }
+        //var x = 0;
+        //await Parallel.ForEachAsync(files, cancellationToken, async (file, token) =>
+        //{
+        //    if (token.IsCancellationRequested)
+        //    {
+        //        log.LogWarning("Canceled!");
+        //        return;
+        //    }
+        //    x++;
 
-            var exists = db.ImageFiles.Find(i => i.RealativePath == file.RealativePath).FirstOrDefault();
-            if (exists == null)
-            {
-                log.LogInformation($"Hash: {{{nameof(file.RealativePath)}}}", file.RealativePath);
+        //    var exists = db.ImageFiles.Find(i => i.RealativePath == file.RealativePath).FirstOrDefault();
+        //    if (exists == null)
+        //    {
+        //        log.LogInformation($"Hash: {{{nameof(file.RealativePath)}}} [{{x}}]", file.RealativePath, x);
 
-                file.PathHash = await HashStringAsync(file.RealativePath);
-                file.Hash = await HashFileAsync(Path.Combine(config.SearchRoot, file.RealativePath));
+        //        file.PathHash = await HashStringAsync(file.RealativePath);
+        //        file.Hash = await HashFileAsync(Path.Combine(config.SearchRoot, file.RealativePath));
 
-                file.Id = file.PathHash;
+        //        file.Id = file.PathHash;
 
-                db.ImageFiles.Insert(file);
-            }
-            else
-            {
-                log.LogWarning($"Skip: {{{nameof(file.RealativePath)}}}", file.RealativePath);
-            }
-        });
+        //        db.ImageFiles.Insert(file);
+        //    }
+        //    else
+        //    {
+        //        log.LogWarning($"Skip: {{{nameof(file.RealativePath)}}} [{{x}}]", file.RealativePath, x);
+        //    }
+
+        //    x--;
+        //});
+
+        var ret =  db.ImageFiles.Find(img => img.Id == new Guid("0000010b-3f4e-ae2e-7338-0c6090701ad3"));
+        var q = ret.AsQueryable();
+
     }
 
     public static async ValueTask<Guid> HashFileAsync(string path)
