@@ -11,4 +11,6 @@ public class ImageFile
     public string Extension { get; set; } = null!;
     public Guid Hash { get; set; } 
     public Guid PathHash { get; set; }
+
+    public bool? Exists { get; set; }
 }
