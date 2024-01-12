@@ -5,9 +5,10 @@ services:
     ports:
       - "8888:8888"
     volumes:
-      # - "./src:/tensorflow"
-       - "C:/Repos/github/YearOfLanguages2023/src/tensorflow:/tensorflow"
+       #- "C:/Repos/github/YearOfLanguages2023/src/tensorflow:/tensorflow"
+       - "./:/tensorflow"
        - "./src/:/src"
+       - "../../../../cache/keras/:/keras"
     deploy:
       resources:
         reservations:

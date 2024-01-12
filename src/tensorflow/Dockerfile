@@ -3,6 +3,7 @@ FROM tensorflow/tensorflow:latest-gpu
 
 WORKDIR /tensorflow/src
 
+ENV KERAS_HOME=/keras
 RUN pip install -U jupyterlab pandas matplotlib
 
 EXPOSE 8888
