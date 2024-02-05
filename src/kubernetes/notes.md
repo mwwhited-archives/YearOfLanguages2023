@@ -5,6 +5,7 @@
 * https://www.composerize.com/
 * https://github.com/dockersamples
 * https://www.middlewareinventory.com/blog/deploy-docker-image-to-kubernetes/
+* https://www.middlewareinventory.com/blog/deploy-docker-image-to-kubernetes/
 
 ## Scripts
 
@@ -17,4 +18,7 @@ docker build -f hello-world.DockerFile -t mwwhited/hello-world .
 docker run -d --rm --name mwwhited-hello -p 80:8000 mwwhited/hello-world
 
 docker-compose --file .\hello-world.yml up
+
+kubectl delete pod myapp
+kubectl apply -f .\kube-manifest.yml
 ```

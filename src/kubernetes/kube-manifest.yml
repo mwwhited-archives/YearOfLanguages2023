@@ -11,7 +11,9 @@ spec:
         memory: "128Mi"
         cpu: "500m"
     ports:
-      - containerPort: 8000
+      - protocol: TCP
+        port: 80
+        targetPort: 80
 
   - name: mwwhited-hello-world
     image: mwwhited/hello
@@ -20,4 +22,4 @@ spec:
         memory: "128Mi"
         cpu: "500m"
     ports:
-      - containerPort: 8000
+      - containerPort: 8001
