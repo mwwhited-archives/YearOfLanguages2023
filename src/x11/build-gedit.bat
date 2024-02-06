@@ -1,0 +1,1 @@
+docker build -t guitest:1.0 -f DockerFile.gedit .

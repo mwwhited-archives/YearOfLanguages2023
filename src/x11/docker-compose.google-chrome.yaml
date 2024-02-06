@@ -1,0 +1,26 @@
+name: google-chrome
+services:
+    google-chrome:
+        stdin_open: true
+        tty: true
+        volumes:
+            - /run/desktop/mnt/host/wslg/.X11-unix:/tmp/.X11-unix
+            - /run/desktop/mnt/host/wslg:/mnt/wslg
+            - google-chrome-cache:/root/.cache/google-chrome
+            - google-chrome-config:/root/.config/google-chrome
+        deploy:
+            resources:
+                reservations:
+                    devices:
+                        - driver: nvidia
+                          count: all
+                          capabilities:
+                              - gpu
+        image: oobdev/google-chrome
+volumes:
+    google-chrome-cache:
+        external:
+            name: google-chrome-cache
+    google-chrome-config:
+        external:
+            name: google-chrome-config

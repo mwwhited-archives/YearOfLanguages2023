@@ -1,0 +1,15 @@
+FROM ubuntu:22.04
+
+ENV  DISPLAY :0
+ENV  WAYLAND_DISPLAY wayland-0
+ENV  XDG_RUNTIME_DIR /mnt/wslg/runtime-dir
+ENV  PULSE_SERVER /mnt/wslg/PulseServer
+
+RUN apt update
+RUN apt install wget -y
+RUN cd /tmp
+RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+RUN apt install --fix-missing ./google-chrome-stable_current_amd64.deb -y 
+
+CMD ["google-chrome", "--no-sandbox"] 
+#CMD ["bash"]
